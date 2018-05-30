@@ -6,10 +6,12 @@ import prettytable
 import random
 import time
 import pandas as pd
+import time
 
 from requests.auth import HTTPBasicAuth
 from influxdb import InfluxDBClient
 from datetime import date
+from datetime import timedelta
 
 from flask import Flask
 
@@ -17,61 +19,71 @@ app = Flask(__name__)
 
 url_get_historical_data = 'https://api.intrinio.com/historical_data?identifier='
 url_get_companies = 'https://api.intrinio.com/companies'
-url_
 auth_user = '48e36a026502830319d748727218a21f'
 auth_pass = 'f671948d2171caac783fa422dfa42bfe'
 database_name = "demo"
-company_counter = 0
+companies_of_interest = ["AAC", "AAL", "AAMC", "AAME", "AAPL"]
 
+
+#Fetch all companies available in intrino's API
 request_obj = requests.get(url_get_companies, auth=HTTPBasicAuth(auth_user, auth_pass))
 companies = json.loads(request_obj.text)
 
 @app.route('/get-stocks-data')
 def get_data():
 
-	global company_counter
-	global companies
-
 	client = InfluxDBClient(host='localhost', port=8086)
 	client.switch_database(database_name)
 	
-	#Read the next 10 company names 
-	for i in range(10):
+	#Read each of the 5 companies
+	for company in companies_of_interest:
 
-		request_obj = requests.get(url_get_historical_data + companies["data"][company_counter]["ticker"] + '&item=pricetoearnings&start_date=2015-01-01&end_date=2018-01-01', auth=HTTPBasicAuth(auth_user, auth_pass))
-
-		json_data = json.loads(request_obj.text)
-		series = []
-
-		print (len(json_data["data"]))
-
-		for i in range(len(json_data["data"])):
+		#Initializing the start date of fetching stocks data to January 1st, 2010
+		start_date = date(2015,1,1)
 		
-			stock_value = 0.0
+		#Initializing the end date to be 100 days from the start date as that's how much
+		#data permits us to retrieve at a time
+		end_date = start_date + timedelta(days = 100)
 		
-			try:
-			    stock_value = float(json_data["data"][i]["value"])
-			except ValueError:
-			    print("Not a number found.. continuing")
-			    continue
+		for j in range(24):
 
-			pointValues = {
-			    "time": json_data["data"][i]["date"],
-			    "measurement": 'stocks4',
-			    "tags": {
-				"Symbol" : companies["data"][company_counter]["ticker"],
-			    },
-			    "fields": {
-				"Stock" : companies["data"][company_counter]["ticker"],
-				"Stock Value" : stock_value
-			    }
-			}
-			series.append(pointValues)
+			request_obj = requests.get(url_get_historical_data + company + '&item=pricetoearnings&start_date=' + str(start_date) + '&end_date=' + str(end_date), auth=HTTPBasicAuth(auth_user, auth_pass))
 
-		print(series)
-		client.write_points(series)
-		company_counter = company_counter + 1
-		print ("Data written to InfluxDB to database demo and series stocks {} {} {}".format(companies["data"][company_counter]["ticker"], companies["data"][company_counter]["name"],len(series)))
+			json_data = json.loads(request_obj.text)
+			series = []
+
+			print (len(json_data["data"]))
+
+			for i in range(len(json_data["data"])):
+		
+				stock_value = 0.0
+				print("{} {}\n".format(json_data["data"][i]["date"], json_data["data"][i]["value"]))
+
+				try:
+				    stock_value = float(json_data["data"][i]["value"])
+				except ValueError:
+				    print("Not a number found.. continuing")
+				    continue
+
+				pointValues = {
+				    "time": json_data["data"][i]["date"],
+				    "measurement": 'stocks5',
+				    "tags": {
+					"Symbol" : company,
+				    },
+				    "fields": {
+					"Stock" : company,
+					"Stock Value" : stock_value
+				    }
+				}
+				series.append(pointValues)
+
+			print(series)
+			client.write_points(series)
+			print ("Data written to InfluxDB to database demo and series stocks {} {}".format(company,len(series)))
+			start_date = end_date
+			end_date = end_date + timedelta(days = 30)
+			time.sleep(1)
 		
 	return ("Stocks data has been written to InfluxDB.")
 
