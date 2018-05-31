@@ -1,10 +1,25 @@
 #-y for apt-get install without interuptions
+sudo apt-get update
+sudo apt-get upgrade
+curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+source /etc/lsb-release
+echo "deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+sudo apt-get update && sudo apt-get install influxdb
+sudo service influxdb start
+
+
+echo "deb https://packagecloud.io/grafana/stable/debian/ wheezy main" | sudo tee /etc/apt/sources.list.d/grafana.list
+curl https://packagecloud.io/gpg.key | sudo apt-key add -
+
+sudo apt-get update && sudo apt-get install grafana
+sudo service grafana-server start
 
 sudo python3 -m pip install Flask
 sudo python3 -m pip install PTable
 sudo apt-get install python3-pip
 sudo python3 -m pip install influxdb
 sudo apt-get install python3-pandas
+
 
 curl -u admin:admin \
   --header "Content-Type: application/json" \
