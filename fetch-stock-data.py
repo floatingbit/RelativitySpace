@@ -21,22 +21,15 @@ url_get_historical_data = 'https://api.intrinio.com/historical_data?identifier='
 url_get_companies = 'https://api.intrinio.com/companies'
 auth_user = '48e36a026502830319d748727218a21f'
 auth_pass = 'f671948d2171caac783fa422dfa42bfe'
-database_name = "demo"
+database_name = "stocks"
 companies_of_interest = ["AAC", "AAL", "AAMC", "AAME", "AAPL"]
 
-
-#Fetch all companies available in intrino's API
-request_obj = requests.get(url_get_companies, auth=HTTPBasicAuth(auth_user, auth_pass))
-companies = json.loads(request_obj.text)
-
-@app.route('/create-grafana-dashboard', methods = ['POST'])
-def create_dashboard():
-	request.headers['	
+client = InfluxDBClient(host='localhost', port=8086)	
+client.create_database(database_name)
 
 @app.route('/get-stocks-data')
 def get_data():
 
-	client = InfluxDBClient(host='localhost', port=8086)
 	client.switch_database(database_name)
 	
 	#Read each of the 5 companies
