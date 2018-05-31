@@ -2,10 +2,6 @@
 
 import requests
 import json
-import prettytable
-import random
-import time
-import pandas as pd
 import time
 
 from requests.auth import HTTPBasicAuth
