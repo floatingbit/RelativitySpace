@@ -13,6 +13,10 @@ curl https://packagecloud.io/gpg.key | sudo apt-key add -
 sudo apt-get update && sudo apt-get install grafana -y
 sudo service grafana-server start
 
+sudo apt-get install python-pip python-dev build-essential -y
+sudo pip install --upgrade pip -y
+sudo pip install --upgrade virtualenv
+
 sudo python3 -m pip install Flask
 sudo python3 -m pip install PrettyTable
 sudo apt-get install python3-pip -y
