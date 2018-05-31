@@ -29,6 +29,10 @@ companies_of_interest = ["AAC", "AAL", "AAMC", "AAME", "AAPL"]
 request_obj = requests.get(url_get_companies, auth=HTTPBasicAuth(auth_user, auth_pass))
 companies = json.loads(request_obj.text)
 
+@app.route('/create-grafana-dashboard', methods = ['POST'])
+def create_dashboard():
+	request.headers['	
+
 @app.route('/get-stocks-data')
 def get_data():
 
