@@ -1,6 +1,6 @@
 * Open a terminal
 * Run `sudo apt-get update`
-* Install git using `sudo-apt-get install git`
+* Install git using `sudo apt-get install git`
 * Clone github repository using `git clone https://github.com/floatingbit/RelativitySpace.git; cd RelativitySpace`
 * Run the installation script using `./install.sh` which installs dependencies for InfluxDB, Grafana and Flask as well as imports a dashboard for viewing Time Series data
 * Start the service that brings up an endpoint that can be used to fetch Stocks data from Intrino by running `./fetch-stock-data.py` in the terminal
