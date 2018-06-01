@@ -45,13 +45,8 @@ def get_data():
 			json_data = json.loads(request_obj.text)
 			series = []
 
-			print (len(json_data["data"]))
-
 			for i in range(len(json_data["data"])):
 		
-				stock_value = 0.0
-				print("{} {}\n".format(json_data["data"][i]["date"], json_data["data"][i]["value"]))
-
 				try:
 				    stock_value = float(json_data["data"][i]["value"])
 				except ValueError:
@@ -71,10 +66,8 @@ def get_data():
 				}
 				series.append(pointValues)
 
-			print(series)
 			client.write_points(series)
-			print ("Data written to InfluxDB to database demo and series stocks {} {}".format(company,len(series)))
-
+			
 			time.sleep(1)
 
 		start_date = end_date
