@@ -1,4 +1,4 @@
-Instructions on how to set up services for extracting Time Series data from Intrino, storing it in InfluxDB and displaying it using Grafana's dashboard:
+Instructions on how to set up services for fetching Time Series data from Intrino, storing it in InfluxDB and displaying it using Grafana's dashboard:
 
 * Open a terminal
 * Run `sudo apt-get update`
